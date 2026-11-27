@@ -22,9 +22,9 @@ use crate::utils::constants::{NETWORK_PHRASE, NETWORK_URL};
 use crate::utils::helper::{contract_hash, id_from_str, sign_transaction};
 use crate::{utils::client::Client, utils::wasm};
 
-pub struct ContractDepoymentService {}
+pub struct ContractDeploymentService {}
 
-impl ContractDepoymentService {
+impl ContractDeploymentService {
     pub fn new_contract_deployer(&self, wasm_path: PathBuf, keypair: Keypair) -> ContractDeployer {
         ContractDeployer::new(Some(wasm_path), keypair)
     }
