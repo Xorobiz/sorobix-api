@@ -1,16 +1,29 @@
-name: CI Build
+name: Validate API
 
 on:
   push:
-    branches: [master]
-    
+    branches: [master, feat/contract-rust-deployer]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
 jobs:
-  build:
-    runs-on: ubuntu-20.04
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
-      - name: Trigger Production Build
-        shell: bash
-        env: 
-            SUPER_SECRET: ${{ secrets.SUPERSECRET }}
-        run: |
-            curl --fail -m 900 --request POST --url "http://backend.sorobix.xyz:6969/update/${{ github.sha }}/${SUPER_SECRET}"
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v2
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+      - name: Check shell scripts
+        run: bash -n utils/*.sh
+      - name: Check crate
+        run: cargo check --locked
+      - name: Clippy
+        run: cargo clippy --all-targets --locked -- -D warnings
