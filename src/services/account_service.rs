@@ -6,8 +6,8 @@ pub struct AccountService {}
 
 impl AccountService {
     pub async fn generate_new_account(&self) -> Result<Account, reqwest::Error> {
-        let mut cspng = OsRng {};
-        let kp: Keypair = Keypair::generate(&mut cspng);
+        let mut csprng = OsRng {};
+        let kp: Keypair = Keypair::generate(&mut csprng);
         let private = PrivateKey(kp.secret.to_bytes());
         let public = PublicKey(kp.public.to_bytes());
         let result = call_friend_bot(public.to_string()).await?;
@@ -22,7 +22,7 @@ impl AccountService {
 async fn call_friend_bot(public_address: String) -> Result<serde_json::Value, reqwest::Error> {
     let body = reqwest::get(format!(
         "https://friendbot-futurenet.stellar.org?addr={}",
-        public_address.to_string()
+        public_address
     ))
     .await?
     .json::<serde_json::Value>()
