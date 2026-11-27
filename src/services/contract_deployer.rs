@@ -76,8 +76,7 @@ impl ContractDeployer {
         }
     }
     pub async fn run(&self) -> Result<String, Error> {
-        let res_str = self.run_and_get_contract_id().await?;
-        Ok(res_str)
+        self.run_and_get_contract_id().await
     }
 
     pub async fn run_and_get_contract_id(&self) -> Result<String, Error> {
@@ -107,7 +106,6 @@ impl ContractDeployer {
             None => rand::thread_rng().gen::<[u8; 32]>(),
         };
 
-        //todo: insert netwokr url
         let client = Client::new(NETWORK_URL)?;
         // generate new public keypair
         let key = &self.keypair;
@@ -127,13 +125,11 @@ impl ContractDeployer {
         )?;
         client.send_transaction(&tx).await?;
 
-        let gg = hex::encode(contract_id.0);
-        Ok(gg)
+        Ok(hex::encode(contract_id.0))
     }
 
     pub async fn run_and_get_hash(&self, path: &PathBuf) -> Result<Hash, Error> {
-        let gg = wasm::Args { wasm: path.clone() };
-        let contract = gg.read()?;
+        let contract = wasm::Args { wasm: path.clone() }.read()?;
         self.run_against_rpc_server_install(contract).await
     }
 
