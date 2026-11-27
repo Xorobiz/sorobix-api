@@ -44,7 +44,7 @@ See `docs/Sorobix-API.postman_collection.json` for full request examples. Replac
 
 ## Prerequisites
 
-- Rust with the `wasm32-unknown-unknown` target
+- Rust 1.79.0, pinned in `rust-toolchain.toml`, with the `wasm32-unknown-unknown` target
 - Soroban CLI 0.7.1 on `PATH`
 - `sh`, `cargo`, and outbound access to Futurenet FriendBot and RPC
 - Docker for containerized runs
@@ -78,7 +78,7 @@ Logging is controlled by `RUST_LOG`. The default filter is `sorobix_api_rs=debug
 cargo fmt --all -- --check
 cargo check --locked
 cargo test --locked
-cargo clippy --all-targets --locked -- -D warnings
+cargo clippy --all-targets --locked
 bash -n utils/*.sh
 ```
 

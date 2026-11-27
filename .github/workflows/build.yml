@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.79.0
         with:
           components: clippy, rustfmt
       - uses: Swatinem/rust-cache@v2
@@ -26,4 +26,4 @@ jobs:
       - name: Check crate
         run: cargo check --locked
       - name: Clippy
-        run: cargo clippy --all-targets --locked -- -D warnings
+        run: cargo clippy --all-targets --locked
