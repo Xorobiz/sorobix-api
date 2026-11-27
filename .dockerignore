@@ -1,2 +1,7 @@
-sorobix_temp/
+.git/
 target/
+sorobix_temp/
+docs/
+.github/
+.env
+*.wasm
