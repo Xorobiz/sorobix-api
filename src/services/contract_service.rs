@@ -13,7 +13,7 @@ pub struct ContractService {}
 
 impl ContractService {
     pub fn compile_contract(&self, lib_file: &str) -> Result<CompileContract, reqwest::Error> {
-        let data: &str = &lib_file;
+        let data: &str = lib_file;
 
         let path: PathBuf = get_to_root_dir("utils/compile_to_wasm.sh").expect("");
 
@@ -36,7 +36,7 @@ impl ContractService {
         secret_key: &str,
     ) -> Result<DeployContract, reqwest::Error> {
         let data: &str = &lib_file;
-        let secret_key: &str = &secret_key;
+        let secret_key: &str = secret_key;
 
         let path: PathBuf = get_to_root_dir("utils/deploy_contract.sh").expect("");
 
@@ -53,7 +53,7 @@ impl ContractService {
 
         let contract_hash: Cow<'_, str> = String::from_utf8_lossy(&output.stdout);
         let mut error_string = "";
-        if contract_hash.len() == 0 {
+        if contract_hash.is_empty() {
             deployed = false;
             error_string = fetch_error_string_during_deployment(&compilation_output);
         }
@@ -72,7 +72,7 @@ impl ContractService {
         contract_id: &str,
         contract_function: &str,
         secret_key: &str,
-        contract_args: &Vec<String>,
+        contract_args: &[String],
     ) -> Result<InvokeContract, reqwest::Error> {
         let mut soroban_cmd = Command::new("soroban");
 
