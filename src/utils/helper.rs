@@ -23,7 +23,7 @@ pub fn contract_hash(contract: &[u8]) -> Result<Hash, XdrError> {
 /// # Errors
 ///
 /// Might return an error
-pub fn padded_hex_from_str(s: &String, n: usize) -> Result<Vec<u8>, FromHexError> {
+pub fn padded_hex_from_str(s: &str, n: usize) -> Result<Vec<u8>, FromHexError> {
     let mut decoded = vec![0u8; n];
     let padded = format!("{s:0>width$}", width = n * 2);
     hex::decode_to_slice(padded, &mut decoded)?;
@@ -66,7 +66,7 @@ pub fn sign_transaction(
 /// # Errors
 ///
 /// Might return an error
-pub fn id_from_str<const N: usize>(contract_id: &String) -> Result<[u8; N], FromHexError> {
+pub fn id_from_str<const N: usize>(contract_id: &str) -> Result<[u8; N], FromHexError> {
     padded_hex_from_str(contract_id, N)?
         .try_into()
         .map_err(|_| FromHexError::InvalidStringLength)
