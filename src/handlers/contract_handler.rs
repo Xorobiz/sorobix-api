@@ -13,7 +13,7 @@ pub async fn compile_contract(
     State(state): State<Arc<RouterState>>,
     Json(payload): Json<CompileContractRequest>,
 ) -> (StatusCode, Json<Response>) {
-    let data: &str = &payload.lib_file.as_str();
+    let data: &str = payload.lib_file.as_str();
 
     let compiled_contract = state
         .application_service
@@ -56,8 +56,8 @@ pub async fn deploy_contract(
     State(state): State<Arc<RouterState>>,
     Json(payload): Json<DeployContractRequest>,
 ) -> (StatusCode, Json<Response>) {
-    let lib_file: &str = &payload.lib_file.as_str();
-    let secret_key: &str = &payload.secret_key.as_str();
+    let lib_file: &str = payload.lib_file.as_str();
+    let secret_key: &str = payload.secret_key.as_str();
 
     // Creating the keypair from private keys
     let private_key = PrivateKey::from_string(secret_key);
@@ -112,10 +112,10 @@ pub async fn invoke_contract(
     State(state): State<Arc<RouterState>>,
     Json(payload): Json<InvokeContractRequest>,
 ) -> (StatusCode, Json<Response>) {
-    let contract_id: &str = &payload.contract_id.as_str();
-    let contract_function: &str = &payload.contract_function.as_str();
-    let secret_key: &str = &payload.secret_key.as_str();
-    let contract_args: &Vec<String> = &payload.contract_arguments;
+    let contract_id: &str = payload.contract_id.as_str();
+    let contract_function: &str = payload.contract_function.as_str();
+    let secret_key: &str = payload.secret_key.as_str();
+    let contract_args: &[String] = &payload.contract_arguments;
 
     let invokation = state
         .application_service
@@ -125,25 +125,25 @@ pub async fn invoke_contract(
 
     match invokation {
         Ok(data) => {
-            if data.error_message.len() == 0 {
+            if data.error_message.is_empty() {
                 let invokation_response = InvokeContractResponse {
                     result: data.result,
                 };
                 let response = Response::success_response(
-                    "contract invokation successful".to_string(),
+                    "contract invocation successful".to_string(),
                     ResponseEnum::InvokeContractResponse(invokation_response),
                 );
-                return (StatusCode::OK, Json(response));
+                (StatusCode::OK, Json(response))
             } else {
                 let response = Response::fail_response(
-                    "contract invokation failed".to_string() + &data.error_message,
+                    "contract invocation failed: ".to_string() + &data.error_message,
                 );
-                return (StatusCode::BAD_REQUEST, Json(response));
+                (StatusCode::BAD_REQUEST, Json(response))
             }
         }
         Err(error) => {
             let response = Response::fail_response(error.to_string());
-            return (StatusCode::BAD_REQUEST, Json(response));
+            (StatusCode::BAD_REQUEST, Json(response))
         }
     }
 }
