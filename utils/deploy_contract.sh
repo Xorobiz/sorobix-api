@@ -1,38 +1,47 @@
-rm -rf ./sorobix_temp
+#!/usr/bin/env bash
+set -euo pipefail
 
-cargo new --lib sorobix_temp
+SOURCE="${1:?Rust source is required}"
+SECRET_KEY="${2:?Secret key is required}"
 
-cd sorobix_temp
+temp_dir="$(mktemp -d)"
+trap 'rm -rf "$temp_dir"' EXIT
 
-echo """
+cd "$temp_dir"
+cargo new --lib sorobix_temp >/dev/null
+
+cat > Cargo.toml <<'EOF'
 [package]
-name = \"sorobix_temp\"
-version = \"0.1.0\"
-edition = \"2021\"
+name = "sorobix_temp"
+version = "0.1.0"
+edition = "2021"
+
 [lib]
-crate-type = [\"cdylib\"]
+crate-type = ["cdylib"]
+
 [dependencies]
-soroban-sdk = { version = \"0.7.0\"}
+soroban-sdk = { version = "0.7.0" }
+
 [profile.release]
-opt-level = \"z\"
+opt-level = "z"
 overflow-checks = true
 debug = 0
-strip = \"symbols\"
+strip = "symbols"
 debug-assertions = false
-panic = \"abort\"
+panic = "abort"
 codegen-units = 1
 lto = true
+
 [profile.release-with-logs]
-inherits = \"release\"
+inherits = "release"
 debug-assertions = true
-""" > Cargo.toml
+EOF
 
-echo $1 > src/lib.rs
-
+printf '%s\n' "$SOURCE" > src/lib.rs
 cargo build --target wasm32-unknown-unknown --release
 
 soroban contract deploy \
-    --wasm target/wasm32-unknown-unknown/release/sorobix_temp.wasm \
-    --source $2 \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022'
+  --wasm target/wasm32-unknown-unknown/release/sorobix_temp.wasm \
+  --source "$SECRET_KEY" \
+  --rpc-url https://rpc-futurenet.stellar.org:443 \
+  --network-passphrase 'Test SDF Future Network ; October 2022'
