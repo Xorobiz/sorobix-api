@@ -27,7 +27,7 @@ async fn main() {
     if std::env::var_os("RUST_LOG").is_none() {
         std::env::set_var(
             "RUST_LOG",
-            "sorobix-api-rs=debug,tower_http=debug,server=debug",
+            "sorobix_api_rs=debug,tower_http=debug,server=debug",
         )
     }
     println!("Sorobix API RS Booted");
